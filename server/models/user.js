@@ -65,6 +65,40 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+// UserSchema.static is an object like .methods
+// but everything you add on to it turns into a model method
+// as opposed to an instance method
+UserSchema.statics.findByToken = function (token) {
+  // User as opposed to user,
+  // instance methods get called with individual document
+  // model methods get called with the model as the this binding
+  let User = this;
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, 'abc123');
+  } catch (e) {
+    // return new Promise((resolve, reject) => {
+    //   reject();
+    // })
+    // a simpler way then creating a promise then rejecting is:
+    return Promise.reject();
+    // and arguement could be returned .reject('test')
+    // that value would get used back in catch as the (e) variable
+    // back in server.js, .catch((e) => {res.status(401).send();
+  };
+
+  return User.findOne({
+    '_id': decoded._id,
+    // quotes are required if you have a . in the value
+    // like below for nested objects
+    // the quotes above for _id, are not required, they're for consistency
+    'tokens.token': token,
+    'tokens.access': 'auth'
+
+  });
+};
+
 var User = mongoose.model('User', UserSchema);
 
 module.exports = {User};

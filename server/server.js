@@ -8,6 +8,7 @@ const{ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {User} = require('./models/user');
 var {Todo} = require('./models/todo');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 const port = process.env.PORT;
@@ -131,6 +132,45 @@ app.post('/users', (req, res) => {
     res.status(400).send(e);
   });
 });
+
+
+// this will set up express middleware to authenticate the users
+// let authenticate = (req, res, next) => {
+//   let token = req.header('x-auth');
+//
+//   User.findByToken(token).then((user) => {
+//     if (!user) {
+//       // this could return the same res.status(401).send()
+//       // but can also reject the promis, like in user.js
+//       // then the .catch((e)) function will be called
+//       // which sends res.status(401).send() anyway
+//       return Promise.reject();
+//     }
+//
+//     req.user = user;
+//     req.token = token;
+//     next();
+//   }).catch((e) => {
+//     res.status(401).send();
+//   });
+// };
+
+app.get('/users/me', authenticate, (req, res) => {
+  res.send(req.user);
+});
+
+// app.get('/users/me', (req, res) => {
+//   let token = req.header('x-auth');
+//
+//   User.findByToken(token).then((user) =>{
+//     if (!user) {
+//       return Promis.reject();
+//     }
+//     res.send(user)
+//   }).catch((e) => {
+//     res.status(401).send();
+//   });
+// });
 
 app.listen(port, () => {
   console.log(`Started on port ${port}`);
