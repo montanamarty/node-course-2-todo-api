@@ -1,16 +1,31 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-let data = {
-  _id: '5ad8f84ae60b509023acd393',
-  access: 'auth'
-};
+let password = '123abc!';
 
-let token = jwt.sign(data, 'abc123');
-console.log(token);
+// bcrypt.genSalt(10, (errr, salt) => {
+//   bcrypt.hash(password, salt, (error, hash) => {
+//     console.log(hash);
+//   });
+// });
 
-let decoded = jwt.verify(token, 'abc123');
-console.log('decoded', decoded);
+var hashedPassword = '$2a$10$zq.h4mpzUOOpsp0ZuxBI7ex4x/Dw/jU3J0Hziqai/vuY8.y/pY4Ba'
+
+bcrypt.compare(password, hashedPassword, (err, res) => {
+  console.log(res);
+});
+
+// let data = {
+//   _id: '5ad8f84ae60b509023acd393',
+//   access: 'auth'
+// };
+//
+// let token = jwt.sign(data, 'abc123');
+// console.log(token);
+//
+// let decoded = jwt.verify(token, 'abc123');
+// console.log('decoded', decoded);
 
 
 // This is an example of how JWT works --- sort of
