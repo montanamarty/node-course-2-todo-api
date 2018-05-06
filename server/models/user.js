@@ -66,6 +66,21 @@ UserSchema.methods.generateAuthToken = function () {
   });
 };
 
+UserSchema.methods.removeToken = function (token) {
+  let user = this;
+
+  return user.update({
+    $pull: {
+      tokens: {token}
+      //since token property and the variable passed into this frunction
+      //are the SAME it can be abrivated as above, else it would be:
+      //tokens: {
+      //  token: token
+      //  }
+    }
+  })
+};
+
 // UserSchema.static is an object like .methods
 // but everything you add on to it turns into a model method
 // as opposed to an instance method
